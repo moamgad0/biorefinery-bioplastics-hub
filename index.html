@@ -1727,10 +1727,12 @@
       selectedLeftIdx = null;
       matchedSet = new Set();
       matcherRightOrder = matcherPairs.map((_, i) => i);
-      for (let i = matcherRightOrder.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [matcherRightOrder[i], matcherRightOrder[j]] = [matcherRightOrder[j], matcherRightOrder[i]];
-      }
+      do {
+        for (let i = matcherRightOrder.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [matcherRightOrder[i], matcherRightOrder[j]] = [matcherRightOrder[j], matcherRightOrder[i]];
+        }
+      } while (matcherRightOrder.some((v, i) => v === i));
       renderMatcher();
     }
 
