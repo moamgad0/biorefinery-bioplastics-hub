@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biorefinery & Bioplastics Interactive Project Hub</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --emerald-deep: #064e3b;
+      --emerald-main: #059669;
+      --emerald-light: #d1fae5;
+      --amber-accent: #d97706;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    .ltr-text {
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+      transform: translateY(-1px);
+    }
+    .subtab-btn.active {
+      background-color: #065f46;
+      color: #ffffff;
+    }
+    .card-hover {
+      transition: all 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #059669; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50">
+
+  <!-- Floating Show-Header Button (Visible when top bar is completely hidden) -->
+  <button id="floatingShowHeaderBtn" onclick="toggleFullHeaderHide(false)" class="hidden fixed top-2 right-2 z-50 px-3 py-1.5 rounded-full bg-emerald-900/95 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-lg border border-emerald-400/50 flex items-center gap-1.5 backdrop-blur transition">
+    <span>🔽</span>
+    <span>Show Menu Bar</span>
+  </button>
+
+  <!-- Top Header Banner (Collapsible & Auto-Compact to maximize viewport space) -->
+  <header id="mainAppHeader" class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-900 text-white shadow-md sticky top-0 z-40 border-b border-emerald-700/50 transition-all duration-200">
+    <!-- Compact Control Strip (Always slim so it takes minimal height) -->
+    <div class="max-w-7xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2 border-b border-emerald-800/60">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-base shrink-0">🌱</span>
+        <span class="text-xs sm:text-sm font-extrabold truncate text-emerald-100">Biorefinery &amp; Bioplastics Hub</span>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="headerBannerToggleBtn" onclick="toggleHeaderBanner()" class="px-2.5 py-1 rounded-md bg-emerald-800/90 hover:bg-emerald-700 text-emerald-100 text-[11px] font-bold border border-emerald-600/80 flex items-center gap-1 transition" title="Show or hide top title banner">
+          <span id="headerBannerToggleIcon">🔽</span>
+          <span id="headerBannerToggleText">Banner</span>
+        </button>
+        <button id="fullHeaderHideBtn" onclick="toggleFullHeaderHide(true)" class="px-2.5 py-1 rounded-md bg-slate-900/80 hover:bg-slate-800 text-amber-300 text-[11px] font-bold border border-amber-500/40 flex items-center gap-1 transition" title="Hide entire top bar for full-screen view">
+          <span>⏫</span>
+          <span>Hide Bar</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Full Hero Banner (Hidden by default on mobile / toggleable anytime) -->
+    <div id="collapsibleTopBanner" class="hidden max-w-7xl mx-auto px-4 py-2.5 flex-wrap items-center justify-between gap-3 border-b border-emerald-800/60">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-xl shadow-inner shrink-0">
+          🌱
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-extrabold tracking-tight text-white">Biorefinery &amp; Bioplastics Interactive Hub</h1>
+            <span class="hidden sm:inline-block bg-amber-500/20 text-amber-300 border border-amber-400/40 text-xs font-bold px-2.5 py-0.5 rounded-full">Slides 1–17 Complete Project</span>
+          </div>
+          <p class="text-xs text-emerald-200/90">Interactive Biorefinery &amp; Lignocellulose Lab + Microbial Cell Factories + Bioplastics Lifecycle &amp; Live Quiz Game</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" onclick="toggleSound()" class="px-3 py-1.5 rounded-lg bg-emerald-800/80 hover:bg-emerald-700 text-emerald-100 text-xs font-bold border border-emerald-600 flex items-center gap-1.5 transition">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel">Sound: ON</span>
+        </button>
+        <button onclick="switchMainTab('game')" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow flex items-center gap-1.5 transition">
+          <span>🎮</span>
+          <span>Launch Interactive Game</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Bar (6 Core Modules) -->
+    <div class="bg-emerald-950/90 border-t border-emerald-800/80">
+      <div class="max-w-7xl mx-auto px-4 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <button id="tab-btn-biorefinery" onclick="switchMainTab('biorefinery')" class="tab-btn active whitespace-nowrap px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold text-emerald-100 hover:bg-emerald-800/60 transition flex items-center gap-1.5">
+          <span>🏭</span>
+          <span>1. Biorefinery &amp; Lignocellulose (Slides 1–5)</span>
+        </button>
+        <button id="tab-btn-microbes" onclick="switchMainTab('microbes')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold text-emerald-100 hover:bg-emerald-800/60 transition flex items-center gap-1.5">
+          <span>🧬</span>
+          <span>2. Cell Factories &amp; Metabolic Eng. (Slides 6–9)</span>
+        </button>
+        <button id="tab-btn-bioplastics" onclick="switchMainTab('bioplastics')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold text-emerald-100 hover:bg-emerald-800/60 transition flex items-center gap-1.5">
+          <span>♻️</span>
+          <span>3. Bioplastics &amp; 2022 Market (Slides 10–17)</span>
+        </button>
+        <button id="tab-btn-game" onclick="switchMainTab('game')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-lg text-xs md:text-sm font-bold text-emerald-100 hover:bg-emerald-800/60 transition flex items-center gap-1.5">
+          <span>🏆</span>
+          <span>4. Interactive Game &amp; Live Quiz</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 space-y-6">
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 1: BIOREFINERY & LIGNOCELLULOSE LAB (SLIDES 1 - 5)             -->
+    <!-- ===================================================================== -->
+    <section id="tab-content-biorefinery" class="space-y-6">
+      <!-- Hero Intro Banner -->
+      <div class="bg-gradient-to-r from-emerald-900 via-teal-800 to-emerald-900 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          <div class="lg:col-span-2 space-y-3">
+            <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 rounded-full text-xs font-bold text-emerald-200">
+              <span>Slides 1 – 5</span>
+              <span>•</span>
+              <span>Circular Bioeconomy &amp; Lignocellulose Fractionation</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-black leading-snug">Biorefinery &amp; The Circular Bioeconomy: Paradigm Shift from Fossil Resources</h2>
+            <p class="text-sm md:text-base text-emerald-100 leading-relaxed">
+              To satisfy the energy and material demand of society sustainably requires the implementation of the <strong>Bioeconomy</strong>, which is based on renewable bio-based resources for the production of materials and energy. <strong>Biorefinery</strong> is an indispensable technology to implement the blueprint of the <strong>Circular Bioeconomy</strong>: <em>"A circular bioeconomy is an economy powered by nature"</em> (<span class="text-amber-300 font-semibold">Biomass &rarr; Raw material &rarr; Processing &rarr; Technologies &rarr; Product &rarr; Recycle</span>).
+            </p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-4 space-y-2.5">
+            <h3 class="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+              <span>⚡</span>
+              <span>The 3 Main Characteristics of a Biorefinery:</span>
+            </h3>
+            <ul class="text-xs space-y-2 text-emerald-50">
+              <li class="flex items-start gap-2">
+                <span class="bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold shrink-0">1</span>
+                <span><strong>Coupled Generation:</strong> Simultaneous generation of energy (gaseous or liquid biofuels) and materials (chemicals, food, and feed).</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold shrink-0">2</span>
+                <span><strong>Combination of Process Steps:</strong> Mechanical processes (such as pressing) and thermochemical processes (such as gasification).</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold shrink-0">3</span>
+                <span><strong>Diverse Raw Materials:</strong> Use of different raw materials from both virgin and residual sources.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Simulator 1: Biochemical Biorefinery vs Petroleum Refinery (Slide 3) -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Interactive Comparison Simulator • Slide 3 (Graphical Abstract)</span>
+            <h3 class="text-xl font-extrabold text-slate-900 mt-1">Biochemical Biorefinery vs. Petroleum Refinery</h3>
+          </div>
+          <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl">
+            <button id="refinery-mode-bio" onclick="setRefineryMode('bio')" class="px-4 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 text-white shadow transition">
+              🌿 Biochemical Biorefinery
+            </button>
+            <button id="refinery-mode-petro" onclick="setRefineryMode('petro')" class="px-4 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              🛢️ Petroleum Refinery
+            </button>
+            <button id="refinery-mode-both" onclick="setRefineryMode('both')" class="px-4 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-slate-200 transition">
+              ⚖️ Side-by-Side Comparison
+            </button>
+          </div>
+        </div>
+
+        <div id="refineryComparisonContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Greenhouse Effect Interactive Box (Slide 3 bottom-left) -->
+        <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">☀️🌍</span>
+              <h4 class="font-extrabold text-amber-950 text-sm md:text-base">Greenhouse Gases &amp; The Greenhouse Effect (Slide 3)</h4>
+            </div>
+            <p class="text-xs md:text-sm text-amber-900 leading-relaxed">
+              <strong>Greenhouse gases (CO₂, H₂O, CH₄):</strong> The gases in the atmosphere that raise the earth surface temperature of planets. <strong>What distinguishes them from other gases:</strong> They absorb the wavelengths of radiation that a planet emits, resulting in the <strong>greenhouse effect</strong>. A biorefinery closes the carbon loop because photosynthetic plants and microalgae re-absorb emitted CO₂.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Simulator 2: Lignocellulose Deconstruction Lab (Slides 4 & 5) -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">Interactive Enzymatic Deconstruction Lab • Slides 2, 4 &amp; 5</span>
+            <h3 class="text-xl font-extrabold text-slate-900 mt-1">Lignocellulose Biomass Pretreatment &amp; Enzymatic Hydrolysis Simulator</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Click through the 4 stages of Slide 5 to inspect how rigid plant biomass is fractionated into fermentable sugars (Glucose &amp; Xylose) and phenolic lignin fractions</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="stepLigno(-1)" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">◀ Previous Stage</button>
+            <span id="lignoStepIndicator" class="text-xs font-extrabold bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-lg">Stage 1 of 4</span>
+            <button onclick="stepLigno(1)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold">Next Stage ▶</button>
+          </div>
+        </div>
+
+        <!-- Stepper Pills -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button onclick="setLignoStage(0)" id="ligno-pill-0" class="p-3 rounded-xl border-2 text-left transition border-emerald-600 bg-emerald-50">
+            <div class="text-xs font-bold text-emerald-700">Stage 1 (Slide 5)</div>
+            <div class="font-extrabold text-sm text-slate-900 mt-0.5">Rigid Structure of Biomass</div>
+            <div class="text-[11px] text-slate-500">Lignin, Cellulose, Xyloglucan</div>
+          </button>
+          <button onclick="setLignoStage(1)" id="ligno-pill-1" class="p-3 rounded-xl border-2 text-left transition border-slate-200 hover:border-emerald-300">
+            <div class="text-xs font-bold text-slate-500">Stage 2 (Slide 5)</div>
+            <div class="font-extrabold text-sm text-slate-900 mt-0.5">Pretreatment + XYN &amp; FAE</div>
+            <div class="text-[11px] text-slate-500">Accessory Enzymes Action</div>
+          </button>
+          <button onclick="setLignoStage(2)" id="ligno-pill-2" class="p-3 rounded-xl border-2 text-left transition border-slate-200 hover:border-emerald-300">
+            <div class="text-xs font-bold text-slate-500">Stage 3 (Slide 5)</div>
+            <div class="font-extrabold text-sm text-slate-900 mt-0.5">Major Cellulases Action</div>
+            <div class="text-[11px] text-slate-500">BGL, CBH, EG &amp; XYN</div>
+          </button>
+          <button onclick="setLignoStage(3)" id="ligno-pill-3" class="p-3 rounded-xl border-2 text-left transition border-slate-200 hover:border-emerald-300">
+            <div class="text-xs font-bold text-slate-500">Stage 4 (Slide 5)</div>
+            <div class="font-extrabold text-sm text-slate-900 mt-0.5">Monosaccharides &amp; Lignin</div>
+            <div class="text-[11px] text-slate-500">Glucose, Xylose &amp; Phenolics</div>
+          </button>
+        </div>
+
+        <!-- Stage Visual & Detail Display -->
+        <div id="lignoStageDisplay" class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Biomass Sources & Plant Metabolites Breakdown (Slides 2 & 4) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+          <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-5 space-y-3">
+            <h4 class="font-extrabold text-emerald-950 text-base flex items-center gap-2">
+              <span>🌾</span>
+              <span>The 6 Biomass Sources (Slides 2 &amp; 4)</span>
+            </h4>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              <strong>Biomass</strong> is renewable organic material obtained from land and aquatic crops, agro/forestry/process residues, postconsumer residues, animal &amp; municipal waste, and unicellular/multicellular microorganisms (microalgae and fungi), used in a <strong>(a) resource-efficient</strong>, <strong>(b) energy-efficient</strong>, and <strong>(c) sustainable way</strong>:
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">1. Agricultural</div>
+                <div class="text-[11px] text-slate-500">Crops &amp; Residues</div>
+              </div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">2. Forestry</div>
+                <div class="text-[11px] text-slate-500">Crops &amp; Residues</div>
+              </div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">3. Industrial</div>
+                <div class="text-[11px] text-slate-500">Process Residues</div>
+              </div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">4. Animal</div>
+                <div class="text-[11px] text-slate-500">Animal Residues</div>
+              </div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">5. Municipal</div>
+                <div class="text-[11px] text-slate-500">Municipal Solid Waste</div>
+              </div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200 shadow-sm">
+                <div class="font-bold text-emerald-900">6. Sewage</div>
+                <div class="text-[11px] text-slate-500">Wastewater Streams</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-teal-50/60 border border-teal-200 rounded-xl p-5 space-y-3">
+            <h4 class="font-extrabold text-teal-950 text-base flex items-center gap-2">
+              <span>🌿</span>
+              <span>Plant Primary vs. Secondary Metabolites (Slide 4)</span>
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="bg-white p-3 rounded-lg border border-teal-200 shadow-sm space-y-1.5">
+                <div class="font-extrabold text-teal-800 border-b pb-1">Primary Metabolites</div>
+                <p class="text-slate-700"><strong>Role:</strong> Involved directly in growth via photosynthesis.</p>
+                <p class="text-slate-600"><strong>Examples (Slide 4):</strong> Lignin and carbohydrates (starch, cellulose, hemicellulose, sugars), Lipids, Proteins, and Nucleic acids.</p>
+                <p class="text-emerald-700 font-semibold">Form <strong>Lignocellulose biomass</strong> (most abundant; requires pretreatment).</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg border border-teal-200 shadow-sm space-y-1.5">
+                <div class="font-extrabold text-amber-800 border-b pb-1">Secondary Metabolites</div>
+                <p class="text-slate-700"><strong>Role:</strong> Produced for defence purposes; available in small quantities in plants, but of high industrial value.</p>
+                <p class="text-slate-600"><strong>Examples (Slide 4):</strong> Alkaloids, tannins, terpenoids, phenolics, sterols, steroids, essential oils.</p>
+                <p class="text-amber-800 font-semibold">Exploited for: <strong>Cosmeceuticals, Nutraceuticals, and Pharmaceuticals</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 2: MICROBIAL CELL FACTORIES & METABOLIC ENGINEERING (6 - 9)    -->
+    <!-- ===================================================================== -->
+    <section id="tab-content-microbes" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-teal-900 via-emerald-900 to-cyan-900 rounded-2xl p-6 text-white shadow-md">
+        <div class="max-w-3xl space-y-2">
+          <span class="bg-teal-400/20 border border-teal-300/30 text-teal-200 text-xs font-bold px-3 py-1 rounded-full">Slides 6 – 9 • Microalgae, Culture Collection &amp; Metabolic Engineering</span>
+          <h2 class="text-2xl md:text-3xl font-black">Microbial Cell Factories, Microalgae &amp; Metabolic Engineering</h2>
+          <p class="text-sm text-teal-100 leading-relaxed">
+            <strong>Cell Factory Definition (Slide 9):</strong> Engineered microbes and plant cells, which can produce chemicals, polymers, and proteins that are used in the materials and food ingredients industries. They work in <strong>closed bioreactors</strong> with <strong>high efficiency</strong>, <strong>specificity</strong>, and <strong>low energy requirements</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Explorer 1: Microalgae Biorefinery Hub (Slide 6 & 8) -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
+        <div class="border-b border-slate-100 pb-3">
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Slides 6 &amp; 8 • Microalgae Biorefinery</span>
+          <h3 class="text-xl font-extrabold text-slate-900 mt-1">Microalgae: Converting CO₂ into 5 Major Bio-Product Families</h3>
+          <p class="text-xs text-slate-600 mt-1">
+            Most microalgal strains are capable of converting high amounts of CO₂ into useful metabolites, which can be extracted and used <strong>(A) directly</strong> or <strong>(B) as intermediate</strong> for producing biofuels and biochemicals such as: <strong>(I) 5-hydroxymethylfurfural (5-HMF)</strong>, <strong>(II) pigments</strong>, and <strong>(III) antioxidants</strong>. Click any family below to explore its industrial applications:
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="algaeCategoryButtons">
+          <!-- Populated by JS -->
+        </div>
+        <div id="algaeDetailCard" class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Interactive Explorer 2: Culture Collection as Microbial Sources (Slide 7) -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
+        <div class="border-b border-slate-100 pb-3">
+          <span class="text-xs font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded-md">Slide 7 • Culture Collection Catalog</span>
+          <h3 class="text-xl font-extrabold text-slate-900 mt-1">Culture Collection as Microbial Sources for Biorefinery</h3>
+          <p class="text-xs text-slate-600 mt-1">Select a microbial group from the Culture Collection (Catalog &rarr; Identification &rarr; Culture Collection) to inspect its industrial enzymes, biochemicals, and biofuels:</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5" id="microbeButtonsContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <div id="microbeDetailPanel" class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Interactive Explorer 3: Metabolic Engineering & Xylose Pathway Simulator (Slides 8 & 9) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Native vs Engineered E. coli (Slide 8) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+          <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md">Slide 8 • Metabolic Engineering Pillars</span>
+          <h3 class="text-lg font-extrabold text-slate-900">E. coli Metabolic Engineering &amp; The 7 Modified Pathways</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            <strong>Metabolic Engineering:</strong> The experimental, computational, and modelling approaches for the elucidation of metabolic pathways and their manipulation by genetic, media, or other environmental means. Toggle between Native and Engineered <em>E. coli</em>:
+          </p>
+
+          <div class="flex items-center gap-3 bg-slate-100 p-2 rounded-xl">
+            <button id="ecoli-native-btn" onclick="setEcoliState('native')" class="flex-1 py-2 rounded-lg text-xs font-extrabold bg-white text-slate-800 shadow">
+              🦠 Native E. coli (Low Yield)
+            </button>
+            <button id="ecoli-eng-btn" onclick="setEcoliState('engineered')" class="flex-1 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60">
+              🚀 Engineered E. coli (High Yield)
+            </button>
+          </div>
+
+          <div id="ecoliStateBox" class="p-4 rounded-xl border space-y-3">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+            <div class="text-xs font-extrabold text-slate-800">The 7 Modified Pathways in Slide 8 Diagram:</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-sky-700">1.</strong> Glucose transport</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-purple-700">2.</strong> The central metabolic pathway</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-pink-700">3.</strong> The aromatic amino acid pathway</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-red-700">4.</strong> The branch pathway</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-amber-700">5.</strong> The degradation pathway</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200"><strong class="text-emerald-700">6.</strong> The transport pathway</div>
+              <div class="bg-white px-2.5 py-1.5 rounded border border-slate-200 sm:col-span-2"><strong class="text-slate-700">7.</strong> The Pta-AckA pathway (Blocked competitive acetate pathway)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Xylose Assimilation in S. cerevisiae & Examples 1, 2, 3 (Slide 9) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+          <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md">Slides 8 &amp; 9 • Examples 1, 2 &amp; 3 + Xylose Pathway</span>
+          <h3 class="text-lg font-extrabold text-slate-900">Xylose Assimilation Simulator in <em>S. cerevisiae</em></h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            In Example 2 (Slide 9), a typical scenario is the <strong>assimilation of xylose by <em>S. cerevisiae</em></strong> through the heterologous expression of two enzymatic routes leading to Ethanol:
+          </p>
+
+          <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl">
+            <button id="xylose-route-a" onclick="setXyloseRoute('isomerase')" class="flex-1 py-2 px-3 rounded-lg text-xs font-extrabold bg-amber-600 text-white shadow">
+              Route (a): Direct Xylose Isomerase (XI)
+            </button>
+            <button id="xylose-route-bc" onclick="setXyloseRoute('reductase')" class="flex-1 py-2 px-3 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60">
+              Route (b + c): XR + XDH Oxidoreductase
+            </button>
+          </div>
+
+          <div id="xylosePathwayBox" class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-3">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Examples 1 and 3 Summary Box -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+              <div class="font-extrabold text-emerald-900">Example 1 (Slide 8 — Microalgal Strains):</div>
+              <p class="text-slate-700 mt-1">
+                <strong>(A)</strong> Blocking of competitive pathways + <strong>(B)</strong> Overexpression of relevant genes in the biosynthesis of fatty acids and carotenoids to improve yields of <strong>lipids and pigments</strong> (precursors for <strong>biodiesel</strong> and <strong>pharmaceutical products</strong>).
+              </p>
+            </div>
+            <div class="bg-purple-50 p-3 rounded-xl border border-purple-200">
+              <div class="font-extrabold text-purple-900">Example 3 (Slide 9 — Plant Alkaloids in E. coli):</div>
+              <p class="text-slate-700 mt-1">
+                Mimicking pathways in cell factories to enhance biosynthesis of novel compounds: Plant secondary metabolites such as <strong>benzylisoquinoline alkaloids</strong> (used in pharmaceuticals and nutraceuticals) produced in <strong>high titers</strong> via a biosynthetic pathway in <em>E. coli</em>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 3: BIOPLASTICS LIFECYCLE & 2022 MARKET DASHBOARD (10 - 17)     -->
+    <!-- ===================================================================== -->
+    <section id="tab-content-bioplastics" class="hidden space-y-6">
+      <!-- Top Hero -->
+      <div class="bg-gradient-to-r from-emerald-950 via-emerald-800 to-teal-800 rounded-2xl p-6 text-white shadow-md">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          <div class="lg:col-span-2 space-y-2">
+            <span class="bg-emerald-400/20 border border-emerald-300/30 text-emerald-200 text-xs font-bold px-3 py-1 rounded-full">Slides 10 – 17 • Growing Plastic From Plants</span>
+            <h2 class="text-2xl md:text-3xl font-black">Bioplastics: Growing Sustainable Plastic From Plants</h2>
+            <p class="text-sm text-emerald-100 leading-relaxed">
+              <strong>Bioplastic Definition (Slide 11):</strong> A bioplastic can be defined as a polymer that is manufactured into a commercial product from a natural source or renewable resource. It is a sustainable alternative to petroplastics.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="bg-white/10 backdrop-blur p-3.5 rounded-xl border border-white/15">
+              <div class="text-2xl font-black text-amber-300">200M Tons</div>
+              <div class="text-xs text-emerald-100 mt-1">Annual global consumption of petro-plastic (3rd most used petroleum derivative)</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur p-3.5 rounded-xl border border-white/15">
+              <div class="text-2xl font-black text-rose-300">&gt;1000 Years</div>
+              <div class="text-xs text-emerald-100 mt-1">Decomposition time of petro-plastic vs. <strong>80 Days</strong> for bioplastics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Simulator: 80-Day Bioplastic Decomposition Slider & 4 Manufacturing Steps (Slide 14) -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Lifecycle &amp; Decomposition Simulator • Slides 10 &amp; 14</span>
+            <h3 class="text-xl font-extrabold text-slate-900 mt-1">4-Step Bioplastic Manufacturing &amp; 80-Day Decomposition Simulator (UV Sunlight, Heat, Oxygen)</h3>
+          </div>
+        </div>
+
+        <!-- 4 Manufacturing Steps (Slide 14) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-xl space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-full bg-emerald-700 text-white text-xs font-black flex items-center justify-center">1</span>
+              <span class="text-lg">🌽🌾</span>
+            </div>
+            <h4 class="font-extrabold text-sm text-emerald-950">1. Plants Based Material</h4>
+            <p class="text-xs text-slate-600">Cellulose, collagen, casein, polyester, and starch extracted from <strong>Cassava, Legumes, Sugarcane, and Corn</strong>.</p>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-xl space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-full bg-emerald-700 text-white text-xs font-black flex items-center justify-center">2</span>
+              <span class="text-lg">🧪</span>
+            </div>
+            <h4 class="font-extrabold text-sm text-emerald-950">2. Dissolution</h4>
+            <p class="text-xs text-slate-600">Conversion and dissolution into chemical intermediates such as <strong>lactic acid, ethanol, etc.</strong></p>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-xl space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-full bg-emerald-700 text-white text-xs font-black flex items-center justify-center">3</span>
+              <span class="text-lg">⛓️</span>
+            </div>
+            <h4 class="font-extrabold text-sm text-emerald-950">3. Chemical Compound</h4>
+            <p class="text-xs text-slate-600">Polymerization into bio-based <strong>resin, polyethylene, and polymer chains</strong>.</p>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-xl space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="w-7 h-7 rounded-full bg-emerald-700 text-white text-xs font-black flex items-center justify-center">4</span>
+              <span class="text-lg">🍾</span>
+            </div>
+            <h4 class="font-extrabold text-sm text-emerald-950">4. Forming Process</h4>
+            <p class="text-xs text-slate-600">Shaping via <strong>Plastic Injection Molding</strong> into bottles, cutlery, and eco-products.</p>
+          </div>
+        </div>
+
+        <!-- Interactive Decomposition Timeline Slider (Day 1 to Day 80) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="font-extrabold text-slate-900 text-sm md:text-base">Interactive Decomposition Timeline (UV Sunlight, Heat, Oxygen — Slide 14)</h4>
+              <p class="text-xs text-slate-600">Drag the slider or click any day milestone (Day 1 &rarr; Day 28 &rarr; Day 38 &rarr; Day 58 &rarr; Day 80) to observe complete biodegradation into CO₂, H₂O, and organic manure:</p>
+            </div>
+            <span id="decompDayBadge" class="px-3.5 py-1 rounded-full bg-emerald-600 text-white text-xs font-black">Day 1 (100% Intact)</span>
+          </div>
+
+          <input id="decompSlider" type="range" min="0" max="4" step="1" value="0" oninput="updateDecompStage(this.value)" class="w-full accent-emerald-600 cursor-pointer h-2 bg-emerald-200 rounded-lg" />
+
+          <div class="grid grid-cols-5 gap-2 text-center">
+            <button onclick="updateDecompStage(0)" id="decomp-btn-0" class="py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white">Day 1</button>
+            <button onclick="updateDecompStage(1)" id="decomp-btn-1" class="py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 text-slate-700">Day 28</button>
+            <button onclick="updateDecompStage(2)" id="decomp-btn-2" class="py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 text-slate-700">Day 38</button>
+            <button onclick="updateDecompStage(3)" id="decomp-btn-3" class="py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 text-slate-700">Day 58</button>
+            <button onclick="updateDecompStage(4)" id="decomp-btn-4" class="py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 text-slate-700">Day 80</button>
+          </div>
+
+          <div id="decompVisualPanel" class="bg-white rounded-xl p-4 border border-slate-200 flex flex-col md:flex-row items-center gap-6">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Production Capacities 2022 Chart + Advantages/Disadvantages (Slides 12 & 15) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 2022 Market Chart (Slide 15) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md">Slide 15 • European Bioplastics, nova-Institute (2022)</span>
+              <h3 class="text-lg font-extrabold text-slate-900 mt-1">Global Production Capacities of Bioplastics in 2022 (Total: 2.22 Million Tonnes)</h3>
+            </div>
+          </div>
+
+          <div class="relative h-72 w-full">
+            <canvas id="bioplasticsMarketChart"></canvas>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs pt-2">
+            <div class="p-2 rounded bg-amber-50 border border-amber-200 flex justify-between"><span>Packaging:</span><strong>48%</strong></div>
+            <div class="p-2 rounded bg-blue-50 border border-blue-200 flex justify-between"><span>Fibres:</span><strong>15%</strong></div>
+            <div class="p-2 rounded bg-orange-50 border border-orange-200 flex justify-between"><span>Consumer goods:</span><strong>14%</strong></div>
+            <div class="p-2 rounded bg-sky-50 border border-sky-200 flex justify-between"><span>Automotive:</span><strong>7%</strong></div>
+            <div class="p-2 rounded bg-slate-100 border border-slate-200 flex justify-between"><span>Others:</span><strong>6%</strong></div>
+            <div class="p-2 rounded bg-lime-50 border border-lime-200 flex justify-between"><span>Agriculture:</span><strong>4%</strong></div>
+            <div class="p-2 rounded bg-green-50 border border-green-200 flex justify-between"><span>Electrics:</span><strong>3%</strong></div>
+            <div class="p-2 rounded bg-stone-100 border border-stone-200 flex justify-between"><span>Coatings:</span><strong>2%</strong></div>
+            <div class="p-2 rounded bg-cyan-50 border border-cyan-200 flex justify-between"><span>Construction:</span><strong>1%</strong></div>
+          </div>
+        </div>
+
+        <!-- Advantages vs Disadvantages of Bioplastics (Slide 12 Visual + Underlying Text) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Slide 12 • Advantages &amp; Disadvantages of Bioplastics</span>
+          <h3 class="text-lg font-extrabold text-slate-900">Advantages vs. Disadvantages (Visual + Underlying Lecture Text)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 space-y-2">
+              <h4 class="font-extrabold text-emerald-900 text-sm flex items-center gap-1.5">✅ Advantages</h4>
+              <ul class="space-y-1.5 text-slate-700 list-disc pl-4">
+                <li><strong>Compensate oil limitation</strong> &amp; do not consume non-renewable raw materials.</li>
+                <li><strong>Save the environment</strong>, reduce non-biodegradable waste &amp; <strong>close the environmental cycle</strong>.</li>
+                <li><strong>Cover petroleum price increases</strong> &amp; provide energy savings in production.</li>
+                <li><strong>Reduce greenhouse gases</strong> and lower carbon footprint.</li>
+                <li><strong>Safe in food packaging:</strong> Do not contain harmful additives such as <strong>phthalates</strong> or <strong>bisphenol</strong>.</li>
+                <li>Fit for all applications, <strong>avoid plastic segregation</strong>, and <strong>useful in marketing</strong>.</li>
+              </ul>
+            </div>
+
+            <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4 space-y-2">
+              <h4 class="font-extrabold text-rose-900 text-sm flex items-center gap-1.5">⚠️ Disadvantages</h4>
+              <ul class="space-y-1.5 text-slate-700 list-disc pl-4">
+                <li><strong>High production cost (Costly).</strong></li>
+                <li><strong>Some types need farmland</strong> &amp; risk <strong>competing with the food supply</strong>.</li>
+                <li><strong>(Partly) use of genetically modified organisms (GMOs).</strong></li>
+                <li><strong>Shorter lifetime</strong> &amp; affected by environmental conditions.</li>
+                <li><strong>Lack of right processability:</strong> Narrow processing window (lower melting temperature), <strong>brittleness</strong>, and <strong>thermal degradation</strong>.</li>
+                <li>Encourage waste increase, <strong>need an additional waste stream</strong>, and <strong>raise compost volume</strong>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Types of Bioplastics (Slide 16), Uses (Slide 13), and GM Bioplastics (Slide 17) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 4 Types of Bioplastics (Slide 16) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
+          <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">Slide 16 • Types of Bioplastics</span>
+          <h3 class="text-base font-extrabold text-slate-900">4 Types of Bioplastics (By Source)</h3>
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-emerald-800">1. Cellulose-based Bioplastics</div>
+              <p class="text-slate-600 mt-0.5">Derived from <strong>cellulose acetate, nitrocellulose, and cellulose esters</strong>.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-emerald-800">2. Starch-based Bioplastics (~50% Market)</div>
+              <p class="text-slate-600 mt-0.5">Constitutes approximately <strong>50% of the bioplastics market</strong>! Starch films are used in packaging consumer goods, bakery items, fruits/vegetables, and magazines.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-emerald-800">3. Protein-based Bioplastics</div>
+              <p class="text-slate-600 mt-0.5">Made from <strong>soy, albumin, wheat gluten</strong>, etc. Best example: soy protein plastic used in <strong>body panels in Ford automobiles</strong>.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-emerald-800">4. Aliphatic Polyesters Bioplastics</div>
+              <p class="text-slate-600 mt-0.5">Includes <strong>PHA, PHH, PHB, and PHV</strong>:
+                <br>• <strong>PLA (Polylactic acid):</strong> Derived from sugar like dextrose or maize.
+                <br>• <strong>PHB (Poly 3-HydroxyButyrate):</strong> Derived from bacteria processing corn starch, glucose, or wastewater.
+                <br>• <strong>PHA (Polyhydroxyalkanoate):</strong> Polyesters produced by fermenting raw vegetable materials with bacterial strains such as <strong><em>Pseudomonas</em></strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Uses of Bioplastics (Slide 13) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
+          <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">Slide 13 • Uses of Bioplastics</span>
+          <h3 class="text-base font-extrabold text-slate-900">5 Major Industrial Uses of Bioplastics</h3>
+          <div class="space-y-2.5 text-xs">
+            <div class="p-2.5 rounded-lg bg-indigo-50/50 border border-indigo-100">
+              <div class="font-extrabold text-indigo-900">1. Packaging</div>
+              <p class="text-slate-600">Bags for shopping, waste collection, agricultural foils, nursery products, textiles, toys, and disposable cutleries (cups, plates, salad bowls, food containers).</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-indigo-50/50 border border-indigo-100">
+              <div class="font-extrabold text-indigo-900">2. Consumer Durable Industry</div>
+              <p class="text-slate-600">Headphones, touch screen computer cases, keyboards, laptops, game consoles, vacuum cleaners, and loudspeakers.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-indigo-50/50 border border-indigo-100">
+              <div class="font-extrabold text-indigo-900">3. Medical Equipment &amp; Dentistry</div>
+              <p class="text-slate-600">Robust surgical <strong>stitches that dissolve without leaving marks behind</strong>; tacks, pins, and screws for healing bones and dermatology surgery; <strong>dental implants and tooth filling</strong>.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-indigo-50/50 border border-indigo-100">
+              <div class="font-extrabold text-indigo-900">4. Automotive and Aerospace</div>
+              <p class="text-slate-600">Transportation components, <strong>especially aeroplanes</strong>.</p>
+            </div>
+            <div class="p-2.5 rounded-lg bg-indigo-50/50 border border-indigo-100">
+              <div class="font-extrabold text-indigo-900">5. Cosmetics &amp; Personal Care</div>
+              <p class="text-slate-600">Packaging cosmetics products, replacing disposable body/hair care items (toothbrushes, cotton buds, hairbrushes, razors) that end up in landfills.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Genetically Modified Bioplastics (Slide 17) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
+          <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md">Slide 17 • Genetically Modified Bioplastics</span>
+          <h3 class="text-base font-extrabold text-slate-900">GM Bioplastics &amp; Recombinant DNA Technology</h3>
+          <div class="space-y-2.5 text-xs text-slate-700 leading-relaxed">
+            <p class="bg-purple-50 p-3 rounded-lg border border-purple-200">
+              Produced by genetically modifying organisms such as <strong>bacteria or yeast</strong> to produce specific enzymes or proteins used in the production of biodegradable plastics from renewable resources.
+            </p>
+            <div class="space-y-1.5">
+              <div class="font-extrabold text-slate-900">Recombinant Plasmid Steps (Slide 17 Diagram A, B, C):</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong>A. Isolation:</strong> Plasmid isolated from bacterium + DNA isolated from donor plant/animal cell.</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong>B. Restriction Cleavage:</strong> The same specific restriction enzyme fragments both donor DNA and plasmid DNA.</div>
+              <div class="p-2 rounded bg-slate-50 border border-slate-200"><strong>C. Ligation &amp; Cloning:</strong> Sticky ends form hydrogen bonds and are sealed into an engineered plasmid (<strong>recombinant DNA</strong>), introduced into a bacterium that reproduces and clones the gene.</div>
+            </div>
+            <div class="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-semibold">
+              💡 <strong>Crucial Note (Slide 17):</strong> The use of genetically modified (GM) crops is <strong>NOT a technical requirement</strong> for the production of any bioplastic materials commercially available today. If used, reasons lie in regional feedstock supply or economic decisions.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- MODULE 4: INTERACTIVE GAME & LIVE CLASSROOM CHALLENGE                 -->
+    <!-- ===================================================================== -->
+    <section id="tab-content-game" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-amber-600 via-orange-600 to-emerald-800 rounded-2xl p-6 text-white shadow-md">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">Interactive Scientific Challenge</span>
+            <h2 class="text-2xl md:text-3xl font-black">🎮 Chief Biorefinery Engineer: Save the Planet Challenge</h2>
+            <p class="text-sm text-amber-100">15 interactive scientific challenges covering all lecture concepts, with synthesized audio feedback and real-time scoring!</p>
+          </div>
+          <div class="flex items-center gap-4 bg-slate-950/40 backdrop-blur px-5 py-3 rounded-2xl border border-white/20">
+            <div class="text-center">
+              <div class="text-[11px] text-amber-200">Score</div>
+              <div id="gameScoreDisplay" class="text-2xl font-black text-amber-300">0</div>
+            </div>
+            <div class="h-8 w-px bg-white/20"></div>
+            <div class="text-center">
+              <div class="text-[11px] text-emerald-200">Streak</div>
+              <div id="gameStreakDisplay" class="text-2xl font-black text-emerald-300">0 🔥</div>
+            </div>
+            <div class="h-8 w-px bg-white/20"></div>
+            <div class="text-center">
+              <div class="text-[11px] text-sky-200">Question</div>
+              <div id="gameProgressDisplay" class="text-2xl font-black text-white">1 / 15</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Arena -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <span id="gameQuestionCategory" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">Stage 1</span>
+            <button onclick="restartGame()" class="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1">🔄 Restart Game</button>
+          </div>
+
+          <div id="gameQuestionContainer" class="space-y-4">
+            <h3 id="gameQuestionText" class="text-lg md:text-xl font-extrabold text-slate-900 leading-relaxed"></h3>
+            <div id="gameOptionsGrid" class="grid grid-cols-1 gap-3"></div>
+          </div>
+
+          <div id="gameFeedbackBox" class="hidden p-4 rounded-xl border text-sm space-y-2">
+            <div id="gameFeedbackTitle" class="font-extrabold text-base"></div>
+            <p id="gameFeedbackExplanation" class="text-xs md:text-sm leading-relaxed"></p>
+            <button onclick="nextGameQuestion()" class="mt-2 px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold">Next Question ➔</button>
+          </div>
+        </div>
+
+        <!-- Mini Sorting Challenge: Match Microbe/Feedstock to Product -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+          <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md">Speed Matcher Mini-Game</span>
+          <h3 class="text-base font-extrabold text-slate-900">Match the Microbe / Polymer to Its Lecture Role!</h3>
+          <p class="text-xs text-slate-600">Click an item on the left, then click its matching lecture product on the right (+50 pts each):</p>
+
+          <div id="matcherArena" class="space-y-3">
+            <!-- Populated by JS -->
+          </div>
+          <button onclick="initMatcher()" class="w-full py-2 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-extrabold transition">🔄 Reset Matcher Cards</button>
+        </div>
+      </div>
+    </section>
+
+    
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-4 px-4 border-t border-slate-800 mt-8">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div><strong>Biorefinery &amp; Bioplastics</strong> — Complete Interactive Academic Project (Slides 1–17)</div>
+      <div>Source Material: Lecture Slides (11/26/2025) &amp; European Bioplastics / nova-Institute (2022)</div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- APPLICATION LOGIC & COMPLETE ENGLISH LECTURE DATASET                    -->
+  <!-- ======================================================================= -->
+  <script>
+    // --- Audio Synthesizer (Web Audio API - No external audio files needed) ---
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(680, now + 0.06);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.09); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.18); // G5
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(240, now);
+          osc.frequency.linearRampToValueAtTime(160, now + 0.25);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    let bannerExpanded = false;
+    function toggleHeaderBanner() {
+      playTone('click');
+      bannerExpanded = !bannerExpanded;
+      const banner = document.getElementById('collapsibleTopBanner');
+      const icon = document.getElementById('headerBannerToggleIcon');
+      const txt = document.getElementById('headerBannerToggleText');
+      if (bannerExpanded) {
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
+        icon.textContent = '🔼';
+        txt.textContent = 'Hide Info';
+      } else {
+        banner.classList.add('hidden');
+        banner.classList.remove('flex');
+        icon.textContent = '🔽';
+        txt.textContent = 'Banner';
+      }
+    }
+
+    function toggleFullHeaderHide(hide) {
+      playTone('click');
+      const header = document.getElementById('mainAppHeader');
+      const floatBtn = document.getElementById('floatingShowHeaderBtn');
+      if (hide) {
+        header.classList.add('hidden');
+        floatBtn.classList.remove('hidden');
+      } else {
+        header.classList.remove('hidden');
+        floatBtn.classList.add('hidden');
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('soundLabel').textContent = soundEnabled ? 'Sound: ON' : 'Sound: MUTED';
+      if (soundEnabled) playTone('click');
+    }
+
+    // --- Main Tab Switching ---
+    let marketChartInstance = null;
+    function switchMainTab(tabId) {
+      playTone('click');
+      const tabs = ['biorefinery', 'microbes', 'bioplastics', 'game'];
+      tabs.forEach(t => {
+        const section = document.getElementById('tab-content-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tabId) {
+          section.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          section.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+      if (tabId === 'bioplastics') {
+        setTimeout(renderMarketChart, 60);
+      }
+    }
+
+    
+    // --- Module 1A: Refinery Comparison (Slide 3) ---
+    function setRefineryMode(mode) {
+      playTone('click');
+      ['bio', 'petro', 'both'].forEach(m => {
+        const btn = document.getElementById('refinery-mode-' + m);
+        if (m === mode) {
+          btn.className = 'px-4 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 text-white shadow transition';
+        } else {
+          btn.className = 'px-4 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-slate-200 transition';
+        }
+      });
+
+      const bioHTML = `
+        <div class="bg-emerald-50/80 border-2 border-emerald-500 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-extrabold bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">Sustainable Bio-Based Pathway</span>
+              <h4 class="text-lg font-black text-emerald-950 mt-1">Biochemical Biorefinery</h4>
+            </div>
+            <span class="text-3xl">🌿🏭</span>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-emerald-200 text-xs space-y-1">
+            <div class="font-bold text-emerald-800">Primary Feedstock:</div>
+            <div class="text-slate-800 font-semibold">Lignocellulosic biomass &amp; renewable bio-based resources</div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold text-emerald-900">4 Core Outputs (Slide 3 Diagram):</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200">⛽ <strong>Renewable biofuel &amp; biogas</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200">🧪 <strong>Eco-friendly biochemicals</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200">♻️ <strong>Biodegradable bioplastics</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-emerald-200">🌱 <strong>Biofertilizer</strong></div>
+            </div>
+          </div>
+          <div class="bg-emerald-900 text-emerald-50 p-3.5 rounded-xl text-xs space-y-1.5">
+            <div class="font-extrabold text-amber-300">5 Key Advantages (Slide 3):</div>
+            <ul class="space-y-1 list-disc pl-4">
+              <li>Environmentally friendly</li>
+              <li>Sustainable biomass</li>
+              <li>Low to zero waste</li>
+              <li>Supports circular bioeconomy</li>
+              <li>Low cost concept</li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      const petroHTML = `
+        <div class="bg-rose-50/80 border-2 border-rose-400 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-extrabold bg-rose-600 text-white px-2.5 py-0.5 rounded-full">Fossil-Dependent Pathway</span>
+              <h4 class="text-lg font-black text-rose-950 mt-1">Petroleum Refinery</h4>
+            </div>
+            <span class="text-3xl">🛢️🏭</span>
+          </div>
+          <div class="bg-white p-3.5 rounded-xl border border-rose-200 text-xs space-y-1">
+            <div class="font-bold text-rose-800">Primary Feedstock:</div>
+            <div class="text-slate-800 font-semibold">Non-renewable Crude Oil</div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-xs font-extrabold text-rose-900">4 Core Outputs (Slide 3 Diagram):</div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-white p-2.5 rounded-lg border border-rose-200">⛽ <strong>Petrol, Diesel and Kerosene</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-rose-200">🔥 <strong>Cooking gas, lubricants &amp; other chemicals</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-rose-200">🛞 <strong>Non-degradable rubber and Plastics</strong></div>
+              <div class="bg-white p-2.5 rounded-lg border border-rose-200">⚗️ <strong>Inorganic fertilizer</strong></div>
+            </div>
+          </div>
+          <div class="bg-rose-950 text-rose-50 p-3.5 rounded-xl text-xs space-y-1.5">
+            <div class="font-extrabold text-rose-300">5 Key Drawbacks (Slide 3):</div>
+            <ul class="space-y-1 list-disc pl-4">
+              <li>Pollution (oil spillage)</li>
+              <li>Greenhouse gas emission leading to global warming and climate change</li>
+              <li>Depleting fossil resources</li>
+              <li>Large waste generation</li>
+              <li>High cost concept</li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      const container = document.getElementById('refineryComparisonContainer');
+      if (mode === 'bio') {
+        container.className = 'grid grid-cols-1 gap-6';
+        container.innerHTML = bioHTML;
+      } else if (mode === 'petro') {
+        container.className = 'grid grid-cols-1 gap-6';
+        container.innerHTML = petroHTML;
+      } else {
+        container.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+        container.innerHTML = bioHTML + petroHTML;
+      }
+    }
+
+    // --- Module 1B: Lignocellulose Deconstruction Stages (Slide 5) ---
+    let currentLignoStage = 0;
+    const lignoStagesData = [
+      {
+        title: 'Stage 1: Rigid Structure of Biomass',
+        subtitle: 'Slide 5 Top Diagram — Native Plant Cell Wall Architecture',
+        badge: 'Locked Structural Matrix',
+        description: 'Lignocellulose is the most abundant biomass. Its rigid structure consists of crystalline cellulose microfibrils cross-linked by hemicellulose chains (Xyloglucan and Arabinoxylan) and shielded by an outer barrier of Lignin linked via covalent Feruloyl bridges.',
+        components: [
+          { name: 'Lignin Barrier', role: 'Protective outer phenolic polymer that blocks direct enzymatic access' },
+          { name: 'Cellulose Core', role: 'Linear chains of glucose units forming the structural backbone' },
+          { name: 'Xyloglucan & Arabinoxylan', role: 'Branched hemicellulose polysaccharides tethering cellulose fibers' },
+          { name: 'Feruloyl Bridge', role: 'Ester/ether cross-links connecting arabinoxylan to the lignin layer' }
+        ]
+      },
+      {
+        title: 'Stage 2: Pretreatment & Action of Accessory Enzymes (XYN & FAE)',
+        subtitle: 'Slide 5 Step 2 — Pretreatment for reducing structural complexity',
+        badge: 'Lignin Disruption & Cellulose Liberation',
+        description: 'Destruction of biomass structure due to pretreatment (reducing structural complexity), followed by the action of accessory enzymes such as xylanase (XYN) and feruloyl esterase (FAE) for releasing the cellulose from the lignin fraction and liberating ferulic acid.',
+        components: [
+          { name: 'Pretreatment', role: 'Disrupts the recalcitrant lignin sheath and reduces structural complexity' },
+          { name: 'Xylanase (XYN)', role: 'Accessory enzyme that cleaves hemicellulose (xylan) backbones' },
+          { name: 'Feruloyl esterase (FAE)', role: 'Cleaves feruloyl bridges to release Ferulic acid and separate lignin from cellulose' },
+          { name: 'Intermediate Outcome', role: 'Cellulose fibers and residual xylan fractions are exposed for major cellulases' }
+        ]
+      },
+      {
+        title: 'Stage 3: Action of Major Cellulases (BGL, CBH, EG)',
+        subtitle: 'Slide 5 Step 3 — Complete degradation to sugars',
+        badge: 'Synergistic Enzymatic Hydrolysis',
+        description: 'Action of major cellulases—BGL (β-glucosidase), CBH (cellobiohydrolase), and EG (endogluconase)—alongside XYN on the liberated cellulose and residual hemicellulose (xylan) fractions to achieve complete degradation to sugars:',
+        components: [
+          { name: 'EG (Endogluconase)', role: 'Cleaves internal β-1,4-glycosidic bonds randomly along cellulose chains' },
+          { name: 'CBH (Cellobiohydrolase)', role: 'Processively cleaves cellobiose units from the ends of cellulose chains' },
+          { name: 'BGL (β-glucosidase)', role: 'Hydrolyzes cellobiose and short oligosaccharides into free monomeric Glucose' },
+          { name: 'XYN (Xylanase)', role: 'Completes the breakdown of residual xylan fractions into monomeric Xylose' }
+        ]
+      },
+      {
+        title: 'Stage 4: Final Released Products — Glucose, Xylose & Lignin Fractions',
+        subtitle: 'Slide 5 Bottom Diagram — Feedstocks for Microbial Biorefinery',
+        badge: 'Ready for Microbial Fermentation',
+        description: 'Monosaccharides such as glucose from cellulose, and xylose from hemicellulose, are recovered as major released fermentable sugars. Meanwhile, lignin fractions are collected and used as sources of phenolic compounds:',
+        components: [
+          { name: 'Glucose (C6 Sugar)', role: 'Major hexose sugar released from cellulose for microbial fermentation' },
+          { name: 'Xylose (C5 Sugar)', role: 'Major pentose sugar released from hemicellulose (assimilated in Slide 9)' },
+          { name: 'Lignin Fractions', role: 'Collected and valorized as renewable sources of phenolic compounds' },
+          { name: 'Downstream Application', role: 'Converted by microbial cell factories into biofuels, bioplastics, and biochemicals' }
+        ]
+      }
+    ];
+
+    function setLignoStage(idx) {
+      playTone('click');
+      currentLignoStage = idx;
+      document.getElementById('lignoStepIndicator').textContent = `Stage ${idx + 1} of 4`;
+      for (let i = 0; i < 4; i++) {
+        const pill = document.getElementById('ligno-pill-' + i);
+        if (i === idx) {
+          pill.className = 'p-3 rounded-xl border-2 text-left transition border-emerald-600 bg-emerald-50 shadow-sm';
+        } else {
+          pill.className = 'p-3 rounded-xl border-2 text-left transition border-slate-200 hover:border-emerald-300 bg-white';
+        }
+      }
+      const st = lignoStagesData[idx];
+      const cardsHTML = st.components.map(c => `
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="font-extrabold text-emerald-900 text-xs">${c.name}</div>
+          <p class="text-xs text-slate-600 mt-1">${c.role}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('lignoStageDisplay').innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="text-base md:text-lg font-black text-slate-900">${st.title}</h4>
+              <div class="text-xs text-emerald-700 font-semibold">${st.subtitle}</div>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">${st.badge}</span>
+          </div>
+          <p class="text-xs md:text-sm text-slate-700 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200">${st.description}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">${cardsHTML}</div>
+        </div>
+      `;
+    }
+
+    function stepLigno(delta) {
+      let next = (currentLignoStage + delta + 4) % 4;
+      setLignoStage(next);
+    }
+
+    // --- Module 2A: Microalgae 5 Product Families (Slide 6) ---
+    const algaeCategories = [
+      {
+        id: 'proteins',
+        icon: '🥩',
+        nameEn: 'Proteins',
+        sub: 'Bio-Nutrients & Feed',
+        products: ['Animal Feed', 'Emulsifier', 'Food Additives'],
+        details: 'Microalgal proteins provide high-value amino acid profiles utilized directly in animal feed formulations, industrial food emulsifiers, and nutritional food additives.'
+      },
+      {
+        id: 'lipids',
+        icon: '💧',
+        nameEn: 'Lipids',
+        sub: 'Biofuels & Fatty Acids',
+        products: ['Biodiesel', 'PUFAs (Polyunsaturated Fatty Acids)', 'Glycerol Products'],
+        details: 'Microalgal lipids (whose yields are boosted by metabolic engineering in Slide 8) serve as prime precursors for renewable biodiesel, PUFAs, and glycerol derivatives.'
+      },
+      {
+        id: 'pigments',
+        icon: '🎨',
+        nameEn: 'Pigments',
+        sub: 'Carotenoids & Natural Dyes',
+        products: ['Cosmetics', 'Dyes and Paints', 'Food Supplement'],
+        details: 'Includes carotenoids, chlorophylls, and phycobilins overexpressed via metabolic engineering (Slide 8) for cosmetics, natural dyes/paints, and antioxidant food supplements.'
+      },
+      {
+        id: 'carbs',
+        icon: '🌾',
+        nameEn: 'Carbohydrates',
+        sub: 'Polymers & Pharma',
+        products: ['Animal Feed', 'Bioplastics', 'Pharmaceuticals'],
+        details: 'Microalgal starch and polysaccharides are fermented or processed into biodegradable bioplastics, pharmaceutical excipients, and animal feed.'
+      },
+      {
+        id: 'vitamins',
+        icon: '💊',
+        nameEn: 'Vitamins & Minerals',
+        sub: 'Vitamins A, B1, B2, C, D, E',
+        products: ['Bio-fertilizers', 'Antioxidants', 'Functional Food'],
+        details: 'Rich in vitamins (A, B1, B2, C, D, E) and essential trace minerals, driving applications in bio-fertilizers, natural antioxidants, and functional foods.'
+      }
+    ];
+
+    function selectAlgaeCategory(catId) {
+      playTone('click');
+      const btnsContainer = document.getElementById('algaeCategoryButtons');
+      btnsContainer.innerHTML = algaeCategories.map(c => `
+        <button onclick="selectAlgaeCategory('${c.id}')" class="p-3 rounded-xl border-2 text-center transition ${c.id === catId ? 'border-emerald-600 bg-emerald-50 shadow-sm' : 'border-slate-200 bg-white hover:border-emerald-300'}">
+          <div class="text-2xl">${c.icon}</div>
+          <div class="font-extrabold text-xs text-slate-900 mt-1">${c.nameEn}</div>
+          <div class="text-[11px] text-slate-500">${c.sub}</div>
+        </button>
+      `).join('');
+
+      const selected = algaeCategories.find(c => c.id === catId);
+      document.getElementById('algaeDetailCard').innerHTML = `
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="text-xs font-bold text-emerald-800">Microalgae Biorefinery Product Family (Slide 6 Diagram):</div>
+            <h4 class="text-lg font-black text-slate-900">${selected.icon} ${selected.nameEn} <span class="text-xs font-normal text-slate-500">(${selected.sub})</span></h4>
+            <p class="text-xs text-slate-700">${selected.details}</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${selected.products.map(p => `<span class="px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-emerald-950 text-xs font-extrabold shadow-sm">${p}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Module 2B: Culture Collection Catalog (Slide 7) ---
+    const microbesData = [
+      {
+        id: 'ecoli',
+        name: 'Escherichia coli (E. coli)',
+        badge: 'Alcohol & Novel Compounds',
+        productDiagram: 'Alcohol (Isopropanol & Fatty Alcohols)',
+        points: [
+          'Produces alcoholic compounds such as isopropanol and long-chain fatty acid alcohols.',
+          'Due to its ease of use in genetic modifications, many approaches regarding the production of various biochemicals in E. coli have been attempted.',
+          'In Slide 9 (Example 3): Successfully engineered to produce plant secondary metabolites—benzylisoquinoline alkaloids—in high titers for pharmaceuticals and nutraceuticals.'
+        ]
+      },
+      {
+        id: 'streptomyces',
+        name: 'Actinomycetes (Streptomyces)',
+        badge: 'Biomonomers & Green Enzymes',
+        productDiagram: 'Biomonomers & Industrial Enzymes',
+        points: [
+          'Actinomycetes, particularly Streptomyces, are good producers of industrially important enzymes.',
+          'Key enzymes include lipases, amylases, cellulases, and proteases.',
+          'Used in the decomposition of various polymers and carrying out other green processes.'
+        ]
+      },
+      {
+        id: 'coryne',
+        name: 'Corynebacterium',
+        badge: 'Amino Acids Factory',
+        productDiagram: 'Amino acids',
+        points: [
+          'Produces amino acids required for food and pharmaceutical applications.',
+          'The current stage of metabolic engineering technology enables this microbe to produce a variety of biochemicals beyond classical amino acids from renewable substrates.'
+        ]
+      },
+      {
+        id: 'yeast',
+        name: 'Yeasts (S. cerevisiae, Yarrowia, Ashbya)',
+        badge: 'Ethanol, Lipids & Vitamin B2',
+        productDiagram: 'Ethanol, Lipids & Riboflavin',
+        points: [
+          'Saccharomyces cerevisiae: The most widely used yeast for biotechnological applications; regularly employed at an industrial scale to produce biochemicals and biofuels (Ethanol).',
+          'Yarrowia lipolytica: An oleaginous (oil-producing) nonconventional yeast used for the production of lipids.',
+          'Ashbya gossypii: Employed for the industrial production of riboflavin (Vitamin B2).',
+          'Recent advances in genetic engineering technologies, such as the discovery of the CRISPR–Cas9 system and approaches, offer a great opportunity to explore the biotechnological potential of these nonconventional yeasts.'
+        ]
+      },
+      {
+        id: 'fungi',
+        name: 'Fungi',
+        badge: 'Industrial Enzymes & Fermented Foods',
+        productDiagram: 'Enzymes',
+        points: [
+          'Extensively used in the production of industrial enzymes.',
+          'Also widely employed to produce secondary metabolites and fermented foods.'
+        ]
+      },
+      {
+        id: 'lab',
+        name: 'Lactic acid bacteria',
+        badge: 'Biodegradable Plastics Monomer',
+        productDiagram: 'Lactic acid',
+        points: [
+          'Proposed and proven for their efficient production of lactic acid.',
+          'Lactic acid is a major building block for biodegradable plastics (such as Polylactic acid — PLA).'
+        ]
+      }
+    ];
+
+    function selectMicrobe(mId) {
+      playTone('click');
+      const container = document.getElementById('microbeButtonsContainer');
+      container.innerHTML = microbesData.map(m => `
+        <button onclick="selectMicrobe('${m.id}')" class="p-3 rounded-xl border-2 text-left transition ${m.id === mId ? 'border-cyan-600 bg-cyan-50 shadow-sm' : 'border-slate-200 bg-white hover:border-cyan-300'}">
+          <div class="font-extrabold text-xs text-slate-900">${m.name}</div>
+          <div class="text-[11px] text-cyan-700 font-bold mt-1">${m.badge}</div>
+        </button>
+      `).join('');
+
+      const item = microbesData.find(m => m.id === mId);
+      document.getElementById('microbeDetailPanel').innerHTML = `
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+            <h4 class="text-base md:text-lg font-black text-slate-900">${item.name}</h4>
+            <span class="px-3 py-1 rounded-full bg-cyan-700 text-white text-xs font-bold">Slide 7 Diagram Output: ${item.productDiagram}</span>
+          </div>
+          <ul class="space-y-2 text-xs md:text-sm text-slate-700 list-disc pl-5">
+            ${item.points.map(p => `<li>${p}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // --- Module 2C: E. coli Native vs Engineered & Xylose Pathway (Slides 8 & 9) ---
+    function setEcoliState(state) {
+      playTone('click');
+      const nativeBtn = document.getElementById('ecoli-native-btn');
+      const engBtn = document.getElementById('ecoli-eng-btn');
+      const box = document.getElementById('ecoliStateBox');
+
+      if (state === 'native') {
+        nativeBtn.className = 'flex-1 py-2 rounded-lg text-xs font-extrabold bg-amber-600 text-white shadow';
+        engBtn.className = 'flex-1 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60';
+        box.className = 'p-4 rounded-xl border border-amber-300 bg-amber-50/70 space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-amber-950 text-sm">Native E. coli (Unmodified Wild-Type Strain)</span>
+            <span class="px-2.5 py-0.5 rounded bg-amber-200 text-amber-900 text-xs font-black">Low Yield</span>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            In unmodified Native <em>E. coli</em>, carbon flux is lost to competing side pathways (such as acetate overflow via the Pta-AckA pathway and degradation pathways), resulting in a <strong>Low Yield</strong> fermentation flask (Slide 8).
+          </p>
+        `;
+      } else {
+        engBtn.className = 'flex-1 py-2 rounded-lg text-xs font-extrabold bg-emerald-600 text-white shadow';
+        nativeBtn.className = 'flex-1 py-2 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60';
+        box.className = 'p-4 rounded-xl border border-emerald-300 bg-emerald-50/70 space-y-2';
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-emerald-950 text-sm">Engineered E. coli (Metabolically Modified Cell Factory)</span>
+            <span class="px-2.5 py-0.5 rounded bg-emerald-600 text-white text-xs font-black">High Yield</span>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            By applying metabolic engineering modifications across the 7 related pathways (enhancing glucose transport, optimizing central/aromatic/branch pathways, and blocking competitive degradation and Pta-AckA pathways), the cell factory achieves a <strong>High Yield</strong> bioreactor output (Slide 8).
+          </p>
+        `;
+      }
+    }
+
+    function setXyloseRoute(route) {
+      playTone('click');
+      const btnA = document.getElementById('xylose-route-a');
+      const btnBC = document.getElementById('xylose-route-bc');
+      const box = document.getElementById('xylosePathwayBox');
+
+      if (route === 'isomerase') {
+        btnA.className = 'flex-1 py-2 px-3 rounded-lg text-xs font-extrabold bg-amber-600 text-white shadow';
+        btnBC.className = 'flex-1 py-2 px-3 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60';
+        box.innerHTML = `
+          <div class="font-extrabold text-amber-950 text-sm">Route (a): Direct Xylose Isomerase (XI) Pathway</div>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-bold bg-white p-3 rounded-lg border border-amber-200">
+            <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-900">Xylose</span>
+            <span>──( XI: Xylose isomerase )──▶</span>
+            <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-900">Xylulose</span>
+            <span>──( XK: Xylulokinase )──▶</span>
+            <span class="px-2.5 py-1 rounded bg-cyan-100 text-cyan-900">Xylulose-5P (PPP)</span>
+            <span>──▶ Glycolysis ──▶</span>
+            <span class="px-2.5 py-1 rounded bg-purple-600 text-white">ETHANOL</span>
+          </div>
+          <p class="text-xs text-slate-700">
+            In this route (Slide 9), the nonspecific aldose reductase gene <strong>Gre3</strong> (which forms unwanted xylitol) is blocked, and heterologous <strong>(a) xylose isomerase (XI)</strong> directly isomerizes Xylose to Xylulose. Next, <strong>(d) Xylulokinase (XK)</strong> phosphorylates Xylulose into <strong>Xylulose-5P</strong>, entering the Pentose Phosphate Pathway (<strong>PPP</strong>) and <strong>Glycolysis</strong> to produce <strong>ETHANOL</strong>.
+          </p>
+        `;
+      } else {
+        btnBC.className = 'flex-1 py-2 px-3 rounded-lg text-xs font-extrabold bg-amber-600 text-white shadow';
+        btnA.className = 'flex-1 py-2 px-3 rounded-lg text-xs font-extrabold text-slate-700 hover:bg-white/60';
+        box.innerHTML = `
+          <div class="font-extrabold text-amber-950 text-sm">Route (b + c): Xylose Reductase (XR) &amp; Xylitol Dehydrogenase (XDH) Pathway</div>
+          <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold bg-white p-3 rounded-lg border border-amber-200">
+            <span class="px-2 py-1 rounded bg-amber-100 text-amber-900">Xylose</span>
+            <span>─( XR + NADPH→NADP )─▶</span>
+            <span class="px-2 py-1 rounded bg-orange-100 text-orange-900">Xylitol</span>
+            <span>─( XDH + NAD⁺→NADH )─▶</span>
+            <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-900">Xylulose</span>
+            <span>─( XK )─▶</span>
+            <span class="px-2 py-1 rounded bg-cyan-100 text-cyan-900">Xylulose-5P</span>
+            <span>─▶</span>
+            <span class="px-2 py-1 rounded bg-purple-600 text-white">ETHANOL</span>
+          </div>
+          <p class="text-xs text-slate-700">
+            In this two-step oxidoreductase route (Slide 9), <strong>(b) xylose reductase (XR)</strong> reduces Xylose to <strong>Xylitol</strong> (converting NADPH to NADP), and <strong>(c) xylitol dehydrogenase (XDH)</strong> oxidizes Xylitol to <strong>Xylulose</strong> (converting NAD⁺ to NADH), followed by <strong>(d) Xylulokinase (XK)</strong> &rarr; <strong>Xylulose-5P (PPP)</strong> &rarr; <strong>Glycolysis</strong> &rarr; <strong>ETHANOL</strong>.
+          </p>
+        `;
+      }
+    }
+
+    // --- Module 3: 80-Day Bioplastic Decomposition Slider (Slide 14) ---
+    const decompStages = [
+      {
+        day: 'Day 1',
+        pct: '100% Intact Bottle (0% Decomposed)',
+        visual: '🍾',
+        holes: '0%',
+        desc: 'The bioplastic bottle (formed via Plastic Injection Molding from cassava, legumes, sugarcane, or corn starch/PLA) begins its end-of-life disposal exposed to natural UV sunlight, heat, and oxygen.'
+      },
+      {
+        day: 'Day 28',
+        pct: '65% Remaining (35% Decomposed)',
+        visual: '🍾✨',
+        holes: '35%',
+        desc: 'By Day 28: Under UV sunlight, heat, and oxygen, ester and glycosidic linkages in the bioplastic polymer chains undergo cleavage. Visible surface pitting and perforation appear without leaching toxic phthalates or bisphenol.'
+      },
+      {
+        day: 'Day 38',
+        pct: '40% Remaining (60% Decomposed)',
+        visual: '🧩🌿',
+        holes: '60%',
+        desc: 'By Day 38: Structural integrity collapses as the bottle fragments into porous bio-oligomers rapidly colonized and assimilated by soil microorganisms.'
+      },
+      {
+        day: 'Day 58',
+        pct: '15% Remaining (85% Decomposed)',
+        visual: '🌱✨',
+        holes: '85%',
+        desc: 'By Day 58: Only fine organic granules remain, actively mineralizing into carbon dioxide (CO₂), water (H₂O), and nutrient-rich humus/manure.'
+      },
+      {
+        day: 'Day 80',
+        pct: '0% Plastic Left — 100% Biodegraded!',
+        visual: '🌳🌍',
+        holes: '100%',
+        desc: 'By Day 80 (compared to >1,000 years for petroplastics!): Complete decomposition is achieved, returning CO₂, H₂O, and organic manure to nourish new photosynthetic plants and close the Circular Bioeconomy loop!'
+      }
+    ];
+
+    function updateDecompStage(idx) {
+      idx = parseInt(idx, 10);
+      playTone('click');
+      document.getElementById('decompSlider').value = idx;
+      const st = decompStages[idx];
+      document.getElementById('decompDayBadge').textContent = `${st.day} (${st.pct})`;
+
+      for (let i = 0; i < 5; i++) {
+        const b = document.getElementById('decomp-btn-' + i);
+        if (i === idx) {
+          b.className = 'py-2 rounded-lg text-xs font-extrabold bg-emerald-600 text-white shadow';
+        } else {
+          b.className = 'py-2 rounded-lg text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50';
+        }
+      }
+
+      document.getElementById('decompVisualPanel').innerHTML = `
+        <div class="w-24 h-24 rounded-2xl bg-emerald-50 border-2 border-emerald-300 flex flex-col items-center justify-center shrink-0">
+          <div class="text-4xl">${st.visual}</div>
+          <div class="text-[11px] font-black text-emerald-900 mt-1">${st.day}</div>
+        </div>
+        <div class="space-y-2 flex-1">
+          <div class="flex items-center justify-between">
+            <h5 class="font-black text-slate-900 text-sm md:text-base">${st.day}: Biodegradation Progress (${st.holes})</h5>
+            <span class="text-xs font-bold text-emerald-700">UV Sunlight + Heat + Oxygen</span>
+          </div>
+          <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 h-full transition-all duration-300" style="width: ${st.holes}"></div>
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed">${st.desc}</p>
+        </div>
+      `;
+    }
+
+    // --- Module 3B: Chart.js 2022 Global Production Capacities (Slide 15) ---
+    function renderMarketChart() {
+      const ctx = document.getElementById('bioplasticsMarketChart');
+      if (!ctx) return;
+      if (marketChartInstance) {
+        marketChartInstance.destroy();
+      }
+      marketChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: [
+            'Packaging (flexible & rigid) - 48%',
+            'Fibres (woven & non-woven) - 15%',
+            'Consumer goods - 14%',
+            'Automotive & transport - 7%',
+            'Others - 6%',
+            'Agriculture & horticulture - 4%',
+            'Electrics & electronics - 3%',
+            'Coatings & adhesives - 2%',
+            'Building & construction - 1%'
+          ],
+          datasets: [{
+            data: [48, 15, 14, 7, 6, 4, 3, 2, 1],
+            backgroundColor: [
+              '#eab308', // Packaging 48%
+              '#0369a1', // Fibres 15%
+              '#ea580c', // Consumer goods 14%
+              '#93c5fd', // Automotive 7%
+              '#a8a29e', // Others 6%
+              '#84cc16', // Agriculture 4%
+              '#16a34a', // Electrics 3%
+              '#78716c', // Coatings 2%
+              '#38bdf8'  // Building 1%
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '58%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                font: { family: 'Inter, sans-serif', size: 11 },
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const pct = context.raw;
+                  const tonnes = ((pct / 100) * 2.22).toFixed(2);
+                  return ` ${pct}% (~${tonnes} Million Tonnes)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Module 4: Interactive Classroom Quiz Game (15 Comprehensive Questions in English) ---
+    const quizQuestions = [
+      {
+        category: 'Slide 2 • Circular Bioeconomy',
+        q: 'How is a "Circular Bioeconomy" defined on Slide 2, and what is its indispensable implementing technology?',
+        options: [
+          'A circular bioeconomy is an economy powered by nature, and Biorefinery is the indispensable technology to implement its blueprint',
+          'An economy based exclusively on crude oil cracking',
+          'A system that generates only heat without producing any materials',
+          'An economy that prohibits microbial fermentation'
+        ],
+        correct: 0,
+        explanation: 'Correct! Slide 2 states: "A circular bioeconomy is an economy powered by nature" and "Biorefinery is an indispensable technology to implement the blueprint of the circular bioeconomy."'
+      },
+      {
+        category: 'Slide 3 • Greenhouse Gases',
+        q: 'According to Slide 3, what specifically distinguishes greenhouse gases from other gases in the atmosphere?',
+        options: [
+          'They reflect 100% of incoming visible sunlight back into space',
+          'They absorb the wavelengths of radiation that a planet emits, resulting in the greenhouse effect',
+          'They consist solely of diatomic nitrogen and argon',
+          'They permanently cool the Earth surface temperature'
+        ],
+        correct: 1,
+        explanation: 'Spot on! Slide 3 explains: "What distinguishes them from other gases is that they absorb the wavelengths of radiation that a planet emits, resulting in the greenhouse effect."'
+      },
+      {
+        category: 'Slide 4 • Plant Metabolites',
+        q: 'Which of the following belong to Plant Secondary Metabolites (produced for defence in small quantities, but of high industrial value for cosmeceuticals, nutraceuticals, and pharmaceuticals)?',
+        options: [
+          'Starch, cellulose, and hemicellulose',
+          'Alkaloids, tannins, and terpenoids (along with phenolics, sterols, steroids, essential oils)',
+          'Crude oil and inorganic fertilizers',
+          'Ribosomal RNA and primary growth proteins'
+        ],
+        correct: 1,
+        explanation: 'Excellent! Slide 4 highlights that Secondary metabolites include alkaloids, tannins, and terpenoids, exploited for cosmeceuticals, nutraceuticals, and pharmaceuticals.'
+      },
+      {
+        category: 'Slide 5 • Lignocellulose Deconstruction',
+        q: 'In Slide 5, which two accessory enzymes act after pretreatment to release cellulose from the lignin fraction, and which three major cellulases then degrade cellulose to glucose?',
+        options: [
+          'Accessory enzymes: Xylanase (XYN) & Feruloyl esterase (FAE); Major cellulases: BGL (β-glucosidase), CBH (cellobiohydrolase), and EG (endogluconase)',
+          'Accessory enzymes: Urease & Catalase; Major cellulases: Xylose reductase & Xylulokinase',
+          'Accessory enzymes: DNA polymerase & Ligase; Major cellulases: Lipase & Protease',
+          'None of the above'
+        ],
+        correct: 0,
+        explanation: 'Exact match! XYN and FAE release cellulose from the lignin fraction (liberating ferulic acid), and BGL, CBH, and EG degrade cellulose into monomeric glucose.'
+      },
+      {
+        category: 'Slide 6 • Microalgae Intermediates',
+        q: 'Microalgae convert high amounts of CO₂ into useful metabolites used directly or as intermediates for biofuels and biochemicals such as:',
+        options: [
+          '(I) 5-hydroxymethylfurfural (5-HMF), (II) pigments, and (III) antioxidants',
+          'Petrol, diesel, and kerosene',
+          'Phthalates and bisphenol additives',
+          'Inorganic silicates only'
+        ],
+        correct: 0,
+        explanation: 'Correct! Slide 6 specifically lists (I) 5-hydroxymethylfurfural, (II) pigments, and (III) antioxidants, alongside the 5 product groups (Proteins, Lipids, Carbohydrates, Pigments, Vitamins/Minerals).'
+      },
+      {
+        category: 'Slide 7 • Culture Collection Yeasts',
+        q: 'In Slide 7, which nonconventional oleaginous yeast is used for lipid production, and which microbe is used to produce riboflavin (Vitamin B2)?',
+        options: [
+          'Yarrowia lipolytica for lipid production, and Ashbya gossypii for riboflavin (Vitamin B2) production',
+          'Escherichia coli for lipids, and Streptomyces for Vitamin B2',
+          'Corynebacterium for lipids, and Lactic acid bacteria for Vitamin B2',
+          'Pseudomonas for both lipids and Vitamin B2'
+        ],
+        correct: 0,
+        explanation: 'Well done! Slide 7 cites the oleaginous yeast Yarrowia lipolytica for lipids, Ashbya gossypii for riboflavin (vitamin B2), and notes CRISPR–Cas9 as a major opportunity to engineer these nonconventional yeasts.'
+      },
+      {
+        category: 'Slide 7 • Actinomycetes & Corynebacterium',
+        q: 'What are the key biorefinery roles of Actinomycetes (Streptomyces) and Corynebacterium on Slide 7?',
+        options: [
+          'Streptomyces produces industrial enzymes (lipases, amylases, cellulases, proteases) for polymer decomposition; Corynebacterium produces amino acids for food and pharmaceutical applications',
+          'Both are exclusively used to refine crude petroleum',
+          'Streptomyces produces soy car panels; Corynebacterium produces glass',
+          'Neither is used in biotechnology'
+        ],
+        correct: 0,
+        explanation: 'Correct! Streptomyces produces lipases, amylases, cellulases, and proteases, while Corynebacterium produces amino acids and novel biochemicals from renewable substrates.'
+      },
+      {
+        category: 'Slide 9 • Xylose Assimilation in Yeast',
+        q: 'In Example 2 (Slide 9), assimilation of xylose by S. cerevisiae is achieved through heterologous expression of which enzymes?',
+        options: [
+          '(a) Xylose isomerase (XI), or (b) Xylose reductase (XR) and (c) Xylitol dehydrogenase (XDH), followed by (d) Xylulokinase (XK)',
+          'Feruloyl esterase and Endogluconase only',
+          'Restriction endonuclease and DNA ligase only',
+          'The Pta-AckA acetate pathway only'
+        ],
+        correct: 0,
+        explanation: 'Spot on! Xylose is converted to Xylulose either directly via XI or via XR + XDH, and then phosphorylated by Xylulokinase (XK) to Xylulose-5P (PPP) -> Glycolysis -> Ethanol.'
+      },
+      {
+        category: 'Slide 9 • Example 3 & Cell Factories',
+        q: 'In Example 3 (Slide 9), which high-value plant secondary metabolites used in pharmaceuticals and nutraceuticals were produced in high titers in E. coli?',
+        options: [
+          'Benzylisoquinoline alkaloids',
+          'Nitrocellulose esters',
+          'Unmodified amylopectin starch',
+          'Polyethylene terephthalate'
+        ],
+        correct: 0,
+        explanation: 'Correct! Slide 9 (Example 3) states that plant secondary metabolites such as benzylisoquinoline alkaloids have been successfully produced in high titers via a biosynthetic pathway in E. coli.'
+      },
+      {
+        category: 'Slide 11 • Petroplastics Crisis',
+        q: 'How many tons of plastic are consumed globally each year, how long can it take to decompose, and why did Bangladesh prohibit traditional plastic bags (Slide 11)?',
+        options: [
+          '200 million tons/year; takes >1,000 years to decompose; Bangladesh prohibited them because they jam sewage pipes and cause flooding',
+          '2.22 million tons/year; takes 80 days to decompose; prohibited for high cost',
+          '10 million tons/year; takes 10 years to decompose; prohibited in Europe only',
+          '50 million tons/year; decomposes instantly in water'
+        ],
+        correct: 0,
+        explanation: 'Accurate! Slide 11 notes 200 million tons consumed annually, >1,000 years to decompose, Bangladesh prohibiting bags that jam sewage pipes and cause flooding, and Europe considering taxes.'
+      },
+      {
+        category: 'Slide 12 • Bioplastics Advantages & Disadvantages',
+        q: 'Which harmful health additives are absent from bioplastics, and what are their main technical disadvantages on Slide 12?',
+        options: [
+          'They do not contain phthalates or bisphenol; disadvantages include high cost, GMO use, farmland/food competition, narrow processing window (lower melting temp), brittleness, and thermal degradation',
+          'They contain high levels of phthalates; their only disadvantage is taking 1,000 years to degrade',
+          'They require crude oil; they have zero disadvantages',
+          'They cannot be used in food packaging'
+        ],
+        correct: 0,
+        explanation: 'Great job! Slide 12 emphasizes that bioplastics are free of harmful additives like phthalates or bisphenol, while noting cost, farmland competition, narrow processing window, brittleness, and thermal degradation.'
+      },
+      {
+        category: 'Slide 13 • Medical Equipment Applications',
+        q: 'How are biodegradable bioplastics utilized in Medical Equipment and Dentistry according to Slide 13?',
+        options: [
+          'As robust surgical stitches that dissolve without leaving marks behind, bone-healing tacks/pins/screws, dermatology surgery devices, and dental implants/tooth fillings',
+          'Only for hospital shopping bags',
+          'Only for manufacturing liquid antibiotics',
+          'They are prohibited in medical applications'
+        ],
+        correct: 0,
+        explanation: 'Exact! Slide 13 highlights surgical stitches that dissolve without leaving marks, tacks/pins/screws for bone healing and dermatology surgery, and dental implants and tooth filling.'
+      },
+      {
+        category: 'Slides 14 & 15 • Decomposition & 2022 Market',
+        q: 'What was the total global production capacity of bioplastics in 2022 (Slide 15), which market segment held the largest share, and how many days does the Slide 14 decomposition timeline span?',
+        options: [
+          '2.22 million tonnes total in 2022; Packaging held 48% (followed by Fibres 15%, Consumer goods 14%); decomposition spans 80 days (Day 1 to Day 80)',
+          '200 million tonnes in 2022; Building & construction held 48%; decomposition spans 1,000 days',
+          '15 million tonnes in 2022; Automotive held 48%; decomposition spans 10 days',
+          '5.5 million tonnes in 2022; Electronics held 50%; decomposition spans 365 days'
+        ],
+        correct: 0,
+        explanation: 'Complete answer! Slide 15 shows 2.22 million tonnes in 2022 (48% Packaging, 15% Fibres, 14% Consumer goods, 7% Automotive), and Slide 14 shows decomposition from Day 1 -> Day 28 -> Day 38 -> Day 58 -> Day 80.'
+      },
+      {
+        category: 'Slide 16 • Types of Bioplastics',
+        q: 'Which bioplastic type constitutes ~50% of the market, what is the best example of soy protein plastic, and which bacteria ferment vegetable materials into PHA (Slide 16)?',
+        options: [
+          'Starch-based bioplastics (~50% of market); Soy protein plastic is used in body panels of Ford automobiles; Pseudomonas bacterial strains produce PHA',
+          'Cellulose-based (~50% of market); used in rocket engines; E. coli produces nitrocellulose',
+          'Protein-based (~50% of market); used only in magazines',
+          'Petro-polyethylene (~50% of bioplastics market)'
+        ],
+        correct: 0,
+        explanation: 'Brilliant! Slide 16 states Starch-based bioplastics constitute ~50% of the market, Ford automobiles use soy protein plastic body panels, PLA comes from dextrose/maize, PHB from corn starch/glucose/wastewater, and PHA from Pseudomonas fermentation.'
+      },
+      {
+        category: 'Slide 17 • Genetically Modified Bioplastics',
+        q: 'According to Slide 17, is the use of genetically modified (GM) crops a technical requirement for producing commercially available bioplastics today?',
+        options: [
+          'No, the use of GM crops is NOT a technical requirement for any commercially available bioplastic today (if used, reasons lie in regional feedstock supply or economic decisions)',
+          'Yes, it is technically impossible to make bioplastics without GM crops',
+          'Yes, GM crops are required for 100% of starch films',
+          'Slide 17 states that bacteria cannot be modified with plasmids'
+        ],
+        correct: 0,
+        explanation: 'Correct! Slide 17 explicitly states: "The use of genetically modified (GM) crops is not a technical requirement for the production of any bioplastic materials that are commercially available today."'
+      }
+    ];
+
+    let currentQIndex = 0;
+    let gameScore = 0;
+    let gameStreak = 0;
+    let questionAnswered = false;
+
+    function renderQuizQuestion() {
+      questionAnswered = false;
+      const qObj = quizQuestions[currentQIndex];
+      document.getElementById('gameProgressDisplay').textContent = `${currentQIndex + 1} / ${quizQuestions.length}`;
+      document.getElementById('gameQuestionCategory').textContent = qObj.category;
+      document.getElementById('gameQuestionText').textContent = qObj.q;
+      document.getElementById('gameFeedbackBox').classList.add('hidden');
+
+      const optsGrid = document.getElementById('gameOptionsGrid');
+      optsGrid.innerHTML = qObj.options.map((opt, i) => `
+        <button id="quiz-opt-${i}" onclick="answerQuiz(${i})" class="w-full text-left p-3.5 rounded-xl border-2 border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/40 text-xs md:text-sm font-bold text-slate-800 transition flex items-center gap-3">
+          <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-800 font-black flex items-center justify-center shrink-0">${['A', 'B', 'C', 'D'][i]}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('');
+    }
+
+    function answerQuiz(choiceIdx) {
+      if (questionAnswered) return;
+      questionAnswered = true;
+      const qObj = quizQuestions[currentQIndex];
+      const fbBox = document.getElementById('gameFeedbackBox');
+      const fbTitle = document.getElementById('gameFeedbackTitle');
+      const fbExp = document.getElementById('gameFeedbackExplanation');
+
+      for (let i = 0; i < qObj.options.length; i++) {
+        const btn = document.getElementById('quiz-opt-' + i);
+        if (i === qObj.correct) {
+          btn.className = 'w-full text-left p-3.5 rounded-xl border-2 border-emerald-600 bg-emerald-100 text-xs md:text-sm font-extrabold text-emerald-950 flex items-center gap-3';
+        } else if (i === choiceIdx && choiceIdx !== qObj.correct) {
+          btn.className = 'w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-100 text-xs md:text-sm font-bold text-rose-950 flex items-center gap-3';
+        } else {
+          btn.className = 'w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50 opacity-60 text-xs md:text-sm text-slate-500 flex items-center gap-3';
+        }
+      }
+
+      if (choiceIdx === qObj.correct) {
+        playTone('correct');
+        gameStreak++;
+        gameScore += 100 + (gameStreak * 10);
+        fbBox.className = 'p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 space-y-2';
+        fbTitle.textContent = '✅ Correct Answer! (+100 pts + Streak Bonus)';
+      } else {
+        playTone('wrong');
+        gameStreak = 0;
+        fbBox.className = 'p-4 rounded-xl border border-rose-300 bg-rose-50 text-rose-950 space-y-2';
+        fbTitle.textContent = '❌ Not quite — Here is the verified lecture fact:';
+      }
+
+      document.getElementById('gameScoreDisplay').textContent = gameScore;
+      document.getElementById('gameStreakDisplay').textContent = `${gameStreak} 🔥`;
+      fbExp.textContent = qObj.explanation;
+      fbBox.classList.remove('hidden');
+    }
+
+    function nextGameQuestion() {
+      playTone('click');
+      currentQIndex = (currentQIndex + 1) % quizQuestions.length;
+      renderQuizQuestion();
+    }
+
+    function restartGame() {
+      playTone('click');
+      currentQIndex = 0;
+      gameScore = 0;
+      gameStreak = 0;
+      document.getElementById('gameScoreDisplay').textContent = '0';
+      document.getElementById('gameStreakDisplay').textContent = '0 🔥';
+      renderQuizQuestion();
+    }
+
+    // --- Mini Speed Matcher in Game Tab ---
+    const matcherPairs = [
+      { left: 'Yarrowia lipolytica', right: 'Lipid production (Oleaginous yeast)' },
+      { left: 'Ashbya gossypii', right: 'Riboflavin (Vitamin B2) production' },
+      { left: 'Soy Protein Plastic', right: 'Body panels in Ford automobiles' },
+      { left: 'Pseudomonas strains', right: 'Fermenting vegetable matter into PHA' },
+      { left: 'Enzymes XYN & FAE', right: 'Releasing cellulose from lignin' }
+    ];
+    let selectedLeftIdx = null;
+    let matchedSet = new Set();
+
+    function initMatcher() {
+      selectedLeftIdx = null;
+      matchedSet = new Set();
+      renderMatcher();
+    }
+
+    function renderMatcher() {
+      const arena = document.getElementById('matcherArena');
+      if (!arena) return;
+      arena.innerHTML = matcherPairs.map((p, idx) => {
+        const isDone = matchedSet.has(idx);
+        const isSel = selectedLeftIdx === idx;
+        return `
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="pickMatcherLeft(${idx})" ${isDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-extrabold border text-left transition ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : isSel ? 'bg-purple-600 text-white border-purple-700' : 'bg-slate-50 border-slate-200 hover:border-purple-400'}">
+              ${isDone ? '✔ ' : ''}${p.left}
+            </button>
+            <button onclick="pickMatcherRight(${idx})" ${isDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-bold border text-left transition ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-white border-slate-200 hover:border-purple-400'}">
+              ${p.right}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function pickMatcherLeft(idx) {
+      if (matchedSet.has(idx)) return;
+      playTone('click');
+      selectedLeftIdx = idx;
+      renderMatcher();
+    }
+
+    function pickMatcherRight(idx) {
+      if (selectedLeftIdx === null || matchedSet.has(idx)) return;
+      if (selectedLeftIdx === idx) {
+        playTone('correct');
+        matchedSet.add(idx);
+        gameScore += 50;
+        document.getElementById('gameScoreDisplay').textContent = gameScore;
+      } else {
+        playTone('wrong');
+      }
+      selectedLeftIdx = null;
+      renderMatcher();
+    }
+
+    
+    // --- Initialize All Interactive Views on Load ---
+    window.addEventListener('DOMContentLoaded', () => {
+      setRefineryMode('both');
+      setLignoStage(0);
+      selectAlgaeCategory('proteins');
+      selectMicrobe('ecoli');
+      setEcoliState('engineered');
+      setXyloseRoute('isomerase');
+      updateDecompStage(0);
+      renderQuizQuestion();
+      initMatcher();
+    });
+  </script>
+</body>
+</html>
