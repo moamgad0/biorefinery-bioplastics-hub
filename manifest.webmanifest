@@ -1,6 +1,6 @@
 {
-  "name": "Biorefinary",
-  "short_name": "Biorefinary",
+  "name": "Biorefinery",
+  "short_name": "Biorefinery",
   "description": "Interactive project hub on biorefinery, the circular bioeconomy and bioplastics.",
   "id": "/biorefinery-bioplastics-hub/",
   "start_url": "/biorefinery-bioplastics-hub/?source=pwa",
