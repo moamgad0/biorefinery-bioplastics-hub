@@ -732,8 +732,8 @@
         <!-- Mini Sorting Challenge: Match Microbe/Feedstock to Product -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
           <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md">Speed Matcher Mini-Game</span>
-          <h3 class="text-base font-extrabold text-slate-900">Match the Microbe / Polymer to Its Lecture Role!</h3>
-          <p class="text-xs text-slate-600">Click an item on the left, then click its matching lecture product on the right (+50 pts each):</p>
+          <h3 class="text-base font-extrabold text-slate-900">Match Each Clue to the Right Enzyme, Pathway or Gene!</h3>
+          <p class="text-xs text-slate-600">Click a clue on the left, then the answer on the right. Answers are shuffled (+50 pts each):</p>
 
           <div id="matcherArena" class="space-y-3">
             <!-- Populated by JS -->
@@ -1711,34 +1711,45 @@
 
     // --- Mini Speed Matcher in Game Tab ---
     const matcherPairs = [
-      { left: 'Yarrowia lipolytica', right: 'Lipid production (Oleaginous yeast)' },
-      { left: 'Ashbya gossypii', right: 'Riboflavin (Vitamin B2) production' },
-      { left: 'Soy Protein Plastic', right: 'Body panels in Ford automobiles' },
-      { left: 'Pseudomonas strains', right: 'Fermenting vegetable matter into PHA' },
-      { left: 'Enzymes XYN & FAE', right: 'Releasing cellulose from lignin' }
+      { left: 'Cuts internal bonds of cellulose at random', right: 'Endoglucanase (EG)' },
+      { left: 'Removes cellobiose from chain ends', right: 'Cellobiohydrolase (CBH)' },
+      { left: 'Turns cellobiose into free glucose', right: 'Beta-glucosidase (BGL)' },
+      { left: 'Finishes residual xylan to xylose', right: 'Xylanase (XYN)' },
+      { left: 'Frees ferulic acid, detaches lignin', right: 'Feruloyl esterase (FAE)' },
+      { left: 'Acetate overflow drains the carbon', right: 'Pta-AckA route blocked' },
+      { left: 'Stops xylose being diverted to xylitol', right: 'GRE3 gene blocked' }
     ];
     let selectedLeftIdx = null;
     let matchedSet = new Set();
+    let matcherRightOrder = [];
 
     function initMatcher() {
       selectedLeftIdx = null;
       matchedSet = new Set();
+      matcherRightOrder = matcherPairs.map((_, i) => i);
+      for (let i = matcherRightOrder.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [matcherRightOrder[i], matcherRightOrder[j]] = [matcherRightOrder[j], matcherRightOrder[i]];
+      }
       renderMatcher();
     }
 
     function renderMatcher() {
       const arena = document.getElementById('matcherArena');
       if (!arena) return;
-      arena.innerHTML = matcherPairs.map((p, idx) => {
-        const isDone = matchedSet.has(idx);
-        const isSel = selectedLeftIdx === idx;
+      arena.innerHTML = matcherPairs.map((p, row) => {
+        const ridx = matcherRightOrder[row];
+        const rp = matcherPairs[ridx];
+        const lDone = matchedSet.has(row);
+        const rDone = matchedSet.has(ridx);
+        const isSel = selectedLeftIdx === row;
         return `
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="pickMatcherLeft(${idx})" ${isDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-extrabold border text-left transition ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : isSel ? 'bg-purple-600 text-white border-purple-700' : 'bg-slate-50 border-slate-200 hover:border-purple-400'}">
-              ${isDone ? '✔ ' : ''}${p.left}
+            <button onclick="pickMatcherLeft(${row})" ${lDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-extrabold border text-left transition ${lDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : isSel ? 'bg-purple-600 text-white border-purple-700' : 'bg-slate-50 border-slate-200 hover:border-purple-400'}">
+              ${lDone ? '✔ ' : ''}${p.left}
             </button>
-            <button onclick="pickMatcherRight(${idx})" ${isDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-bold border text-left transition ${isDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-white border-slate-200 hover:border-purple-400'}">
-              ${p.right}
+            <button onclick="pickMatcherRight(${ridx})" ${rDone ? 'disabled' : ''} class="p-2.5 rounded-lg text-xs font-bold border text-left transition ${rDone ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-white border-slate-200 hover:border-purple-400'}">
+              ${rp.right}
             </button>
           </div>
         `;
